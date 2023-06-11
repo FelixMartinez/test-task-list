@@ -1,13 +1,13 @@
-import React from "react";
 import { NextPage } from "next";
-import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
+
 import { TaskLayout } from "@/src/components/layout/TaskLayout";
-import { Grid, Card, CardHeader } from "@mui/material";
+import CountryList from "@/src/components/ui/CountryList";
 import { EntryList } from "@/src/components/ui/EntryList";
 import { NewEntry } from "@/src/components/ui/NewEntry";
+import { Grid, Card, CardHeader } from "@mui/material";
 
-const DetailPage: NextPage = (props: any) => {
-  console.log("props: ", props);
+const DetailPage: NextPage = () => {
+
   return (
     <TaskLayout
       pageDescription="In this section you can edit, delete, assign and end task"
@@ -42,17 +42,5 @@ const DetailPage: NextPage = (props: any) => {
     </TaskLayout>
   );
 };
-
-export const getServerSideProps = withPageAuthRequired({
-  async getServerSideProps(ctx): Promise<{ props: { foot: string } }> {
-    // access the user session if needed
-    // const session = await getSession(ctx.req, ctx.res);
-    return {
-      props: {
-        foot: "bar",
-      },
-    };
-  },
-});
 
 export default DetailPage;

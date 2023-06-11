@@ -1,7 +1,8 @@
-import { useState } from "react";
-import NextLink from "next/link";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
-
+import NextLink from "next/link";
+import { useApolloClient } from "@apollo/client";
+import { useAuth } from "8base-react-sdk";
 import {
   AppBar,
   Box,
@@ -13,15 +14,17 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import {
-  ClearOutlined,
-  SearchOutlined,
-} from "@mui/icons-material";
+import { ClearOutlined, SearchOutlined } from "@mui/icons-material";
+import { useLogout } from "@/src/hooks/useLogout";
+
 
 export const Navbar = () => {
   const { asPath, push } = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const apolloClient = useApolloClient();
+  const { authClient } = useAuth();
+  const onLogoutClick = useLogout();
 
   const onSearchTerm = () => {
     if (searchTerm.trim().length === 0) return;
@@ -39,35 +42,6 @@ export const Navbar = () => {
         </NextLink>
 
         <Box flex={1} />
-
-        <Box
-          sx={{
-            display: isSearchVisible ? "none" : { xs: "none", sm: "block" },
-          }}
-          className="fadeIn"
-        >
-          <NextLink href="/category/men" passHref legacyBehavior>
-            <Link>
-              <Button color={asPath === "/category/men" ? "primary" : "info"}>
-                Hombres
-              </Button>
-            </Link>
-          </NextLink>
-          <NextLink href="/category/women" passHref legacyBehavior>
-            <Link>
-              <Button color={asPath === "/category/women" ? "primary" : "info"}>
-                Mujeres
-              </Button>
-            </Link>
-          </NextLink>
-          <NextLink href="/category/kid" passHref legacyBehavior>
-            <Link>
-              <Button color={asPath === "/category/kid" ? "primary" : "info"}>
-                Niños
-              </Button>
-            </Link>
-          </NextLink>
-        </Box>
 
         <Box flex={1} />
 
@@ -100,7 +74,7 @@ export const Navbar = () => {
           </IconButton>
         )}
 
-        <Button href="/api/auth/logout">Logout</Button>
+        <Button onClick={onLogoutClick}>Logout</Button>
       </Toolbar>
     </AppBar>
   );

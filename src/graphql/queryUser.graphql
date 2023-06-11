@@ -1,0 +1,11 @@
+query {
+  usersAuthsList {
+    items {
+      id
+      name
+      email
+      nickname
+      picture
+    }
+  }
+}

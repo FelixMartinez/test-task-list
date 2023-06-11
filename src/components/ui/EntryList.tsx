@@ -1,12 +1,13 @@
 import { FC, useContext, useMemo, DragEvent } from "react";
+import { useQuery } from "react-apollo";
 import { List, Paper } from "@mui/material";
 
-import { EntryStatus } from "../../interfaces";
-
-import styles from "./EntryList.module.css";
 import { EntriesContext } from "@/src/contexts/entries";
 import { UIContext } from "@/src/contexts/ui/UIContext";
 import { EntryCard } from "./EntryCard";
+import QUERY_CON from '@/src/graphql/queryUser.graphql';
+import { EntryStatus } from "@/src/interfaces";
+import styles from "./EntryList.module.css";
 
 interface Props {
   status: EntryStatus;
