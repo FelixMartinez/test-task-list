@@ -1,12 +1,11 @@
 import { NextPage } from "next";
-
-import { TaskLayout } from "@/src/components/layout/TaskLayout";
-import CountryList from "@/src/components/ui/CountryList";
-import { EntryList } from "@/src/components/ui/EntryList";
-import { NewEntry } from "@/src/components/ui/NewEntry";
 import { Grid, Card, CardHeader } from "@mui/material";
 
-const DetailPage: NextPage = () => {
+import { TaskLayout } from "@/src/components/layout/TaskLayout";
+import { EntryList } from "@/src/components/ui/EntryList";
+import { NewEntry } from "@/src/components/ui/NewEntry";
+
+const TaskListPage: NextPage = () => {
 
   return (
     <TaskLayout
@@ -43,4 +42,4 @@ const DetailPage: NextPage = () => {
   );
 };
 
-export default DetailPage;
+export default TaskListPage;

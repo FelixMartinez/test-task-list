@@ -1,12 +1,10 @@
 import { FC, useContext, useMemo, DragEvent } from "react";
-import { useQuery } from "react-apollo";
 import { List, Paper } from "@mui/material";
 
 import { EntriesContext } from "@/src/contexts/entries";
 import { UIContext } from "@/src/contexts/ui/UIContext";
-import { EntryCard } from "./EntryCard";
-import QUERY_CON from '@/src/graphql/queryUser.graphql';
 import { EntryStatus } from "@/src/interfaces";
+import { EntryCard } from "./EntryCard";
 import styles from "./EntryList.module.css";
 
 interface Props {
@@ -14,6 +12,7 @@ interface Props {
 }
 
 export const EntryList: FC<Props> = ({ status }) => {
+ 
   const { entries, updateEntry } = useContext(EntriesContext);
   const { isDragging, endDragging } = useContext(UIContext);
 
@@ -29,8 +28,9 @@ export const EntryList: FC<Props> = ({ status }) => {
 
   const onDropEntry = (event: DragEvent<HTMLDivElement>) => {
     const id = event.dataTransfer.getData("text");
-
-    const entry = entries.find((e) => e._id === id)!;
+    let entry = entries.find((e) => e.id === id)!;
+    console.log('entry__ ', entry);
+    console.log('status__ ', status);
     entry.status = status;
     updateEntry(entry);
     endDragging();
@@ -53,7 +53,7 @@ export const EntryList: FC<Props> = ({ status }) => {
       >
         <List sx={{ opacity: isDragging ? 0.2 : 1, paddingBottom: '50px', transition: "all .3s" }}>
           {entriesByStatus && entriesByStatus.map((entry) => (
-            <EntryCard key={entry._id} entry={entry} />
+            <EntryCard key={entry.id} entry={entry} />
           ))}
         </List>
       </Paper>

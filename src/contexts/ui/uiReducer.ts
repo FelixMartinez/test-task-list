@@ -22,7 +22,6 @@ export const uiReducer = (state: UIState, action: UIActionType): UIState => {
       };
 
     case "UI - Set isAddingEntry":
-      console.log('afff')
       return {
         ...state,
         isAddingEntry: action.payload,

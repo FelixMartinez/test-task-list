@@ -1,7 +1,10 @@
 export interface Entry {
-    _id: string;
+    id: string;
     description: string;
-    createdAt: number;
+    createdAt: Date;
+    updatedAt: Date;
+    responsibleIs?: string;
+    informerIs: string;
     status: EntryStatus;
 }
 

@@ -7,10 +7,10 @@ import {
 import merge from 'deepmerge';
 import isEqual from 'lodash-es/isEqual';
 import { setContext } from '@apollo/client/link/context';
-import { useAuth } from '8base-react-sdk';
 
-const CONT_API = 'https://api.8base.com/clinb11sb000g08mp4x3gay7q';
-// const CONT_API = 'https://countries.trevorblades.com';
+const CONT_API = process.env.NEXT_PUBLIC_APP_WORKSPACE_ENDPOINT;
+export const APOLLO_STATE_PROP_NAME = '__APOLLO_STATE__';
+let apolloClient: ApolloClient<NormalizedCacheObject> | null;
 
 // Crea un enlace HTTP
 export const httpLink = createHttpLink({
@@ -20,8 +20,6 @@ export const httpLink = createHttpLink({
 // Función para agregar el token de autenticación a los headers
 const authLink = setContext((_, { headers }) => {
   // Declare variable to store authToken
-  console.log('aaaaaaaa: ');
-  
   let token = '';
 
   // Devuelve los headers con el token incluido
@@ -29,31 +27,22 @@ const authLink = setContext((_, { headers }) => {
     ...headers,
     Authorization: token ? `Bearer ${token}` : '',
   }};
-  console.log('headersConst: ', headersConst);
 
   return headersConst;
 });
 
 // Función para agregar el token de autenticación a los headers
 export const setAuthToken = (token: string) => setContext((_, { headers }) => {
-  // Declare variable to store authToken
-  console.log('tokenaa: ', token);
-  
   // Devuelve los headers con el token incluido
   const headersConst = {headers: {
     ...headers,
     Authorization: token ? `Bearer ${token}` : '',
   }};
-  console.log('headersConst: ', headersConst);
 
   return headersConst;
 });
 
-export const APOLLO_STATE_PROP_NAME = '__APOLLO_STATE__';
-
-let apolloClient: ApolloClient<NormalizedCacheObject> | null;
-
-function createApolloClient() {
+const createApolloClient = () => {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: authLink.concat(httpLink),

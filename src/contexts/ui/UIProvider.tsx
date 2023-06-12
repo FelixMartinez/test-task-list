@@ -27,7 +27,6 @@ export const UIProvider = ({ children }: Props) => {
   const closeSideMenu = () => dispatch({ type: "UI - Close Sidebar" });
 
   const setIsAddingEntry = (isAdding: boolean) => {
-    console.log('asd')
     dispatch({ type: "UI - Set isAddingEntry", payload: isAdding });
   };
 
