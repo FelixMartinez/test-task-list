@@ -47,15 +47,21 @@ export const EntryCard: FC<Props> = ({ entry }) => {
     >
       <CardActionArea>
         <CardContent>
-          <Typography sx={{ whiteSpace: "pre-line" }}>
-            {entry.description}
+          <Typography sx={{ whiteSpace: "pre-line", fontWeight: "bold", fontSize: "16px" }}>
+            {entry.description.slice(0, 80) + (entry.description.length > 80 ? '...' : '')}
+          </Typography>
+          <Typography sx={{ whiteSpace: "pre-line", fontSize: "14px", color: "#444", display: "flex", alignItems: "center", marginTop: "6px"}}>
+            <Typography sx={{fontWeight: "bold", fontSize: "13px"}}>Resp: &nbsp;</Typography> {entry.responsibleIs || 'Sin asignar'}
+          </Typography>
+          <Typography sx={{ whiteSpace: "pre-line", fontSize: "14px", color: "#444", display: "flex", alignItems: "center"}}>
+            <Typography sx={{fontWeight: "bold", fontSize: "13px"}}>Infor: &nbsp;</Typography> {entry.informerIs}
           </Typography>
         </CardContent>
 
         <CardActions
           sx={{ display: "flex", justifyContent: "end", paddingRight: 2 }}
         >
-          <Typography variant="body2">{`Creada ${dateFunctions.getFormatDistanceToNow(
+          <Typography sx={{fontSize: "12px", color: "#888"}}>{`Creada ${dateFunctions.getFormatDistanceToNow(
                 convertDateStringToTimeInMilliseconds(entry.createdAt!)
               )}`}</Typography>
         </CardActions>

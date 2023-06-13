@@ -1,8 +1,7 @@
-import { useCallback, useState } from "react";
-import { useRouter } from "next/router";
-import NextLink from "next/link";
-import { useApolloClient } from "@apollo/client";
 import { useAuth } from "8base-react-sdk";
+import { useLogout } from "@/src/hooks/useLogout";
+import { useApolloClient } from "@apollo/client";
+import { ClearOutlined, SearchOutlined } from "@mui/icons-material";
 import {
   AppBar,
   Box,
@@ -14,16 +13,15 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { ClearOutlined, SearchOutlined } from "@mui/icons-material";
-import { useLogout } from "@/src/hooks/useLogout";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 
 export const Navbar = () => {
-  const { asPath, push } = useRouter();
+  const { push } = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false);
-  const apolloClient = useApolloClient();
-  const { authClient } = useAuth();
   const onLogoutClick = useLogout();
 
   const onSearchTerm = () => {

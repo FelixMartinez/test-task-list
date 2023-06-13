@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { useAuth } from '8base-react-sdk';
@@ -61,7 +60,6 @@ const authorizeUser = async ({ authClient, apolloClient, history, data }: any) =
     .finally(() => {
       /* Redirect user to root path */
       history.replace('/task/list');
-      console.log('daaaaaaaaa')
     });
 };
 

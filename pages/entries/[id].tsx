@@ -2,6 +2,7 @@
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
 import {
+  Autocomplete,
   Button,
   Card,
   CardActions,
@@ -18,141 +19,208 @@ import {
   capitalize,
 } from "@mui/material";
 import { GetServerSideProps } from "next";
-import React, {
-  ChangeEvent,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { TaskLayout } from "@/src/components/layout/TaskLayout";
+import { Loading } from "@/src/components/ui/Loading";
 import { EntriesContext } from "@/src/contexts/entries";
 import { ENTRY_QUERY } from "@/src/graphql/entries.graphql";
 import { useQueries } from "@/src/hooks/useQueries";
 import { Entry, EntryStatus } from "@/src/interfaces";
 import { createApolloClient } from "@/src/shared/apollo";
 import { dateFunctions } from "@/src/shared/utils";
-import { Loading } from "@/src/components/ui/Loading";
-import { useHistory } from "react-router-dom";
 import { convertDateStringToTimeInMilliseconds } from "@/src/shared/utils/dateFunctions";
+import { Controller, useForm } from "react-hook-form";
+import { useHistory } from "react-router-dom";
+import { LIST_USERS_QUERY } from "@/src/graphql/users.graphql";
+import MyDialog from "@/src/components/ui/Dialog";
 
 const validStatus: EntryStatus[] = ["pending", "in-progress", "finished"];
+type FormData = {
+  description: string;
+  status: EntryStatus;
+  responsibleIs: string;
+};
 
 const EntryPage = React.memo((props: any) => {
-  const { updateEntry } = useContext(EntriesContext);
-  const id = props.computedMatch.params.id.toString();
-  let data = useQueries(ENTRY_QUERY, { id });
-
   let dart: Entry;
   const [entry, setEntry] = useState(dart!);
-  const [inputValue, setInputValue] = useState("");
-  const [status, setStatus] = useState<EntryStatus>("pending");
-  const [touched, setTouched] = useState(false);
+  const [users, seUsers] = useState([]);
+  const [open, seOpen] = useState(false);
+  const { updateEntry } = useContext(EntriesContext);
+  const id = props.computedMatch.params.id.toString();
+  const data = useQueries(ENTRY_QUERY, { id });
+  const userList = useQueries(LIST_USERS_QUERY);
+
   const history = useHistory();
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors, isValid, isDirty },
+  } = useForm<FormData>({
+    defaultValues: {
+      description: "",
+      status: "pending",
+      responsibleIs: "",
+    },
+  });
 
-  const isNotValid = useMemo(
-    () => inputValue.length <= 0 && touched,
-    [inputValue, touched]
-  );
-
-  const onInputValueChanged = (event: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
-  };
-
-  const onStatusChanged = (event: ChangeEvent<HTMLInputElement>) => {
-    setStatus(event.target.value as EntryStatus);
-  };
-
-  const onSave = () => {
-    if (inputValue.trim().length === 0) return;
+  const onSave = ({ description, status, responsibleIs }: FormData) => {
+    if (description.trim().length === 0) return;
+    if (responsibleIs.trim().length === 0) return;
 
     const updatedEntry: Entry = {
       ...entry,
       status,
-      description: inputValue,
+      description,
+      responsibleIs,
     };
 
     updateEntry(updatedEntry, true);
     history.goBack();
   };
 
+  const onDelete = () => {
+    const updatedEntry: Entry = {
+      ...entry,
+      status: 'deleted'
+    };
+
+    updateEntry(updatedEntry, true);
+    history.goBack();
+  }
+
   useEffect(() => {
     if (data) {
       setEntry(data.entry);
-      setInputValue(data.entry.description);
-      setStatus(data.entry.status);
-      console.log('datadata: ', data)
+      setValue("description", data.entry.description);
+      setValue("status", data.entry.status);
+      setValue("responsibleIs", data.entry.responsibleIs || "");
     }
-
+    if (userList) {
+      seUsers(
+        userList.usersList.items.map(
+          (user: any) => user.firstName + " " + user.lastName
+        )
+      );
+    }
   }, [data]);
 
-  if (!entry) {
-    return <Loading />
+  if (!entry || !userList) {
+    return <Loading />;
   }
 
   return (
     <TaskLayout
       pageDescription="See task detail"
-      title={inputValue.substring(0, 20) + "..."}
+      title={entry.description.substring(0, 20) + "..."}
     >
-      <Grid container justifyContent="center" sx={{ marginTop: 2 }}>
-        <Grid item xs={12} sm={8} md={6}>
-          <Card sx={{ background: "#eee", padding: "10px" }}>
-            <CardHeader
-              title={`Entrada:`}
-              subheader={`Creada ${dateFunctions.getFormatDistanceToNow(
-                convertDateStringToTimeInMilliseconds(entry.createdAt!)
-              )}`}
-            />
-
-            <CardContent>
-              <TextField
-                sx={{ marginTop: 2, marginBottom: 1 }}
-                fullWidth
-                placeholder="Nueva entrada"
-                autoFocus
-                multiline
-                label="Nueva entrada"
-                value={inputValue}
-                onBlur={() => setTouched(true)}
-                onChange={onInputValueChanged}
-                helperText={isNotValid && "Ingrese un valor"}
-                error={isNotValid}
+      <MyDialog
+        open={open}
+        setOpen={seOpen}
+        handleClick={onDelete}
+        title="¿deseas eliminar la entrada?"
+        description="Al eliminar la entrada ya no podras recuperarla, ¿Estas seguro de eliminarlo?"
+      />
+      <form onSubmit={handleSubmit(onSave)} noValidate>
+        <Grid container justifyContent="center" sx={{ marginTop: 2 }}>
+          <Grid item xs={12} sm={8} md={6}>
+            <Card sx={{ background: "#eee", padding: "10px" }}>
+              <CardHeader
+                title={`Entrada:`}
+                subheader={`Creada ${dateFunctions.getFormatDistanceToNow(
+                  convertDateStringToTimeInMilliseconds(entry.createdAt!)
+                )}`}
               />
 
-              <FormControl>
-                <FormLabel>Estado:</FormLabel>
-                <RadioGroup row value={status} onChange={onStatusChanged}>
-                  {validStatus.map((option) => (
-                    <FormControlLabel
-                      key={option}
-                      value={option}
-                      control={<Radio />}
-                      label={capitalize(option)}
+              <CardContent>
+                <Controller
+                  name="description"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <TextField
+                      sx={{ marginTop: 2, marginBottom: 4 }}
+                      fullWidth
+                      placeholder="Description"
+                      autoFocus
+                      multiline
+                      label="Description"
+                      {...field}
                     />
-                  ))}
-                </RadioGroup>
-              </FormControl>
-            </CardContent>
+                  )}
+                />
 
-            <CardActions>
-              <Button
-                startIcon={<SaveOutlinedIcon />}
-                variant="contained"
-                fullWidth
-                onClick={onSave}
-                disabled={inputValue.length <= 0}
-                color="primary"
-              >
-                Save
-              </Button>
-            </CardActions>
-          </Card>
+                <FormControl>
+                  <FormLabel>Estatus:</FormLabel>
+
+                  <Controller
+                    rules={{ required: true }}
+                    name="status"
+                    control={control}
+                    render={({ field }) => (
+                      <RadioGroup row {...field} sx={{ marginBottom: 4 }}>
+                        {validStatus.map((option) => (
+                          <FormControlLabel
+                            key={option}
+                            value={option}
+                            control={<Radio />}
+                            label={capitalize(option)}
+                          />
+                        ))}
+                      </RadioGroup>
+                    )}
+                  />
+                </FormControl>
+
+                <Controller
+                  name="responsibleIs"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { ref, onChange, ...field } }) => (
+                    <Autocomplete
+                      id="responsible-select-demo"
+                      options={users}
+                      fullWidth
+                      sx={{ marginBottom: 6 }}
+                      defaultValue={field.value}
+                      onChange={(_, data) => onChange(data)}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          {...field}
+                          label="Select responsible"
+                          variant="outlined"
+                          fullWidth
+                          inputRef={ref}
+                        />
+                      )}
+                    />
+                  )}
+                />
+              </CardContent>
+
+              <CardActions>
+                <Button
+                  type="submit"
+                  startIcon={<SaveOutlinedIcon />}
+                  variant="contained"
+                  fullWidth
+                  disabled={!isValid}
+                  color="primary"
+                  sx={{ marginBottom: 2 }}
+                >
+                  Save
+                </Button>
+              </CardActions>
+            </Card>
+          </Grid>
         </Grid>
-      </Grid>
-
+      </form>
       <IconButton
+        onClick={() => seOpen(true)}
         sx={{
           position: "fixed",
           bottom: 30,
@@ -187,7 +255,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   }
 
   const entry = JSON.parse(JSON.stringify(data.entry));
-  console.log("data22222----->: ", entry);
   return {
     props: {
       entry,

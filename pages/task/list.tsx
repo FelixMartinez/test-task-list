@@ -1,12 +1,10 @@
-import { NextPage } from "next";
-import { Grid, Card, CardHeader } from "@mui/material";
+import { Card, CardHeader, Grid } from "@mui/material";
 
 import { TaskLayout } from "@/src/components/layout/TaskLayout";
 import { EntryList } from "@/src/components/ui/EntryList";
 import { NewEntry } from "@/src/components/ui/NewEntry";
 
 export const TaskListPage = () => {
-console.log('aqui')
   return (
     <TaskLayout
       pageDescription="In this section you can edit, delete, assign and end task"

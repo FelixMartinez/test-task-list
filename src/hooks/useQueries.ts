@@ -5,7 +5,7 @@ import { DocumentNode } from 'graphql';
 import { setAuthToken, httpLink } from "../shared/apollo";
 
 export const useQueries = (graphql: DocumentNode, variables?: any) => {
-  const { data, client } = useQuery(graphql, {variables});
+  const { data, client } = useQuery(graphql, {variables, pollInterval: 500});
   const { authState } = useAuth();
 
   if (authState.token) {
