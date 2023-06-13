@@ -1,5 +1,6 @@
 import { UIState } from "./";
 
+// Definition of the types of actions
 type UIActionType =
   | { type: "UI - Open Sidebar" }
   | { type: "UI - Close Sidebar" }
@@ -7,6 +8,7 @@ type UIActionType =
   | { type: "UI - Start Dragging" }
   | { type: "UI - End Dragging" };
 
+// Reducer for the state of the UI context
 export const uiReducer = (state: UIState, action: UIActionType): UIState => {
   switch (action.type) {
     case "UI - Open Sidebar":

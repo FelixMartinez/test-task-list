@@ -11,21 +11,43 @@ interface Props {
   status: EntryStatus;
 }
 
+/**
+ * Input list component.
+ *
+ * Displays a list of entries based on their status.
+ * Allows you to drag and drop the entries to change their status.
+ *
+ * @param {Object} props - Component properties.
+ * @param {EntryStatus} props.status - The status of the entries shown in the list.
+ * @returns {ReactElement} The EntryList component.
+ */
 export const EntryList: FC<Props> = ({ status }) => {
- 
   const { entries, updateEntry } = useContext(EntriesContext);
   const { isDragging, endDragging } = useContext(UIContext);
 
+  /**
+   * Filter entries by status using useMemo to optimize performance.
+   */
   const entriesByStatus = useMemo(
     () =>
       entries && entries.filter((entry) => entry.status === status),
     [entries, status]
   );
 
+  /**
+   * Allows you to drop dragged items in the list.
+   *
+   * @param {DragEvent<HTMLDivElement>} event - The drop event.
+   */
   const allowDrop = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
   };
 
+  /**
+   * Handles the event of dropping an entry in the list.
+   *
+   * @param {DragEvent<HTMLDivElement>} event - The drop event.
+   */
   const onDropEntry = (event: DragEvent<HTMLDivElement>) => {
     const id = event.dataTransfer.getData("text");
     let entry = entries.find((e) => e.id === id)!;

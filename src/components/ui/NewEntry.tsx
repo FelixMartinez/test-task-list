@@ -6,6 +6,13 @@ import AddIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import { UIContext } from "@/src/contexts/ui/UIContext";
 import { EntriesContext } from "@/src/contexts/entries";
 
+/**
+ * Component to add a new entry.
+ *
+ * Allows the user to add a new task entry.
+ *
+ * @returns {ReactElement} The NewEntry component.
+ */
 export const NewEntry = () => {
   const { addNewEntry } = useContext(EntriesContext);
   const { isAddingEntry, setIsAddingEntry } = useContext(UIContext);
@@ -13,10 +20,19 @@ export const NewEntry = () => {
   const [inputValue, setInputValue] = useState("");
   const [touched, setTouched] = useState(false);
 
+  /**
+   * Handle change in text field.
+   *
+   * @param {ChangeEvent<HTMLInputElement>} event The change event.
+   */
   const onTextFieldChanged = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
 
+  /**
+   * Save the new entry.
+   * Add the input to the list and reset the form values.
+   */
   const onSave = () => {
     if (inputValue.length === 0) return;
 
@@ -34,6 +50,7 @@ export const NewEntry = () => {
             fullWidth
             sx={{ marginTop: 2, marginBottom: 1 }}
             placeholder="Nueva entrada"
+            id="addNewEntry"
             autoFocus
             multiline
             label="Nueva entrada"
@@ -45,11 +62,13 @@ export const NewEntry = () => {
           />
 
           <Box display="flex" justifyContent="space-between">
+            {/* Cancel button */}
             <Button variant="text" sx={{color: '#444'}} onClick={() => setIsAddingEntry(false)}>
               Cancelar
             </Button>
-
+            {/* Save button */}
             <Button
+              id="saveEntry"
               variant="outlined"
               sx={{color: '#444', borderColor: '#444'}}
               endIcon={<SaveOutlinedIcon />}
@@ -60,6 +79,7 @@ export const NewEntry = () => {
           </Box>
         </>
       ) : (
+        // Button to display the add input form
         <Button
           startIcon={<AddIcon />}
           fullWidth

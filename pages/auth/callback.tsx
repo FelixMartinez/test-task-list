@@ -10,6 +10,12 @@ import { AUTH_PROFILE_ID } from '@/src/shared/constants';
 import { CURRENT_USER_QUERY, USER_SIGN_UP_MUTATION } from '@/src/shared/graphql';
 import { useHistory } from 'react-router-dom';
 
+/**
+ * Authorizes the user and performs the corresponding actions.
+ *
+ * @param {Object} param - Parameters to authorize the user.
+ * @returns {Promise<boolean>} - A promise indicating whether the user was successfully authorized.
+ */
 const authorizeUser = async ({ authClient, apolloClient, history, data }: any) => {
   /* Get authResult from auth client after redirect */
   const { idToken, email, firstName, lastName } = await authClient.getAuthorizedData();
@@ -63,6 +69,14 @@ const authorizeUser = async ({ authClient, apolloClient, history, data }: any) =
     });
 };
 
+/**
+ * Callback container.
+ *
+ * This component is used to authorize the user and perform the corresponding actions after authorization.
+ * Redirects the user to the main task page once authorized.
+ *
+ * @returns {ReactElement} The CallbackContainer component.
+ */
 export default function CallbackContainer() {
   const { authClient, authState } = useAuth();
   const apolloClient = useApolloClient();

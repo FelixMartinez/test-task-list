@@ -18,16 +18,35 @@ interface Props {
   entry: Entry;
 }
 
+/**
+ * Entry card component.
+ *
+ * Shows the details of an entry in the form of a card.
+ * Allows to drag card and redirect to ticket details page when card is clicked.
+ *
+ * @param {Object} props - Component properties.
+ * @param {Entry} props.entry - The entry to display on the card.
+ * @returns {ReactElement} The EntryCard component.
+ */
 export const EntryCard: FC<Props> = ({ entry }) => {
   const { startDragging, endDragging } = useContext(UIContext);
   const history = useHistory()
 
+  /**
+   * Handles the card drag start event.
+   *
+   * @param {DragEvent} event - The drag event.
+   */
   const onDragStart = (event: DragEvent) => {
     event.dataTransfer.setData("text", entry.id);
 
     startDragging();
   };
 
+  /**
+   * Handles the card click event.
+   * Redirects the user to the entry details page.
+   */
   const onDragEnd = () => {
     endDragging();
   };
@@ -47,21 +66,21 @@ export const EntryCard: FC<Props> = ({ entry }) => {
     >
       <CardActionArea>
         <CardContent>
-          <Typography sx={{ whiteSpace: "pre-line", fontWeight: "bold", fontSize: "16px" }}>
+          <Typography component={'p'} sx={{ whiteSpace: "pre-line", fontWeight: "bold", fontSize: "16px" }}>
             {entry.description.slice(0, 80) + (entry.description.length > 80 ? '...' : '')}
           </Typography>
-          <Typography sx={{ whiteSpace: "pre-line", fontSize: "14px", color: "#444", display: "flex", alignItems: "center", marginTop: "6px"}}>
-            <Typography sx={{fontWeight: "bold", fontSize: "13px"}}>Resp: &nbsp;</Typography> {entry.responsibleIs || 'Sin asignar'}
+          <Typography component={'span'} sx={{ whiteSpace: "pre-line", fontSize: "14px", color: "#444", display: "flex", alignItems: "center", marginTop: "6px"}}>
+            <Typography component={'span'} sx={{fontWeight: "bold", fontSize: "13px"}}>Resp: &nbsp;</Typography> {entry.responsibleIs || 'Sin asignar'}
           </Typography>
-          <Typography sx={{ whiteSpace: "pre-line", fontSize: "14px", color: "#444", display: "flex", alignItems: "center"}}>
-            <Typography sx={{fontWeight: "bold", fontSize: "13px"}}>Infor: &nbsp;</Typography> {entry.informerIs}
+          <Typography component={'span'} sx={{ whiteSpace: "pre-line", fontSize: "14px", color: "#444", display: "flex", alignItems: "center"}}>
+            <Typography component={'span'} sx={{fontWeight: "bold", fontSize: "13px"}}>Infor: &nbsp;</Typography> {entry.informerIs}
           </Typography>
         </CardContent>
 
         <CardActions
           sx={{ display: "flex", justifyContent: "end", paddingRight: 2 }}
         >
-          <Typography sx={{fontSize: "12px", color: "#888"}}>{`Creada ${dateFunctions.getFormatDistanceToNow(
+          <Typography component={'span'} sx={{fontSize: "12px", color: "#888"}}>{`Creada ${dateFunctions.getFormatDistanceToNow(
                 convertDateStringToTimeInMilliseconds(entry.createdAt!)
               )}`}</Typography>
         </CardActions>

@@ -4,6 +4,15 @@ import { TaskLayout } from "@/src/components/layout/TaskLayout";
 import { EntryList } from "@/src/components/ui/EntryList";
 import { NewEntry } from "@/src/components/ui/NewEntry";
 
+/**
+ * Task list page.
+ *
+ * This page shows a list of tasks divided into sections:
+ * pending, in progress and completed. Allows you to add new entries
+ * and display the existing entries in each section.
+ *
+ * @returns {ReactElement} The TaskListPage component.
+ */
 export const TaskListPage = () => {
   return (
     <TaskLayout
@@ -15,9 +24,9 @@ export const TaskListPage = () => {
           <Card sx={{ height: "calc(100vh - 100px )" }}>
             <CardHeader title="Pendientes" sx={{background: '#eee'}}/>
 
-            {/* Agregar una nueva entrada */}
-            {/* Listado de las entradas */}
+            {/* Add a new entry */}
             <NewEntry />
+             {/* List of entries */}
             <EntryList status="pending" />
           </Card>
         </Grid>

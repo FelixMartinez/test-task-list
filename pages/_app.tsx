@@ -22,6 +22,15 @@ import { lightTheme } from "@/src/themes";
 import { BrowserRouter } from "react-router-dom";
 import { Routes } from "./routes";
 
+/**
+ * Next.js application root component.
+ *
+ * This component configures the authentication provider, Apollo Client provider,
+ * Material-UI theme, routing, and other contexts and providers required for the application.
+ *
+ * @param {AppProps} props - Component properties.
+ * @returns {ReactElement} The App component.
+ */
 export default function App({ Component, pageProps }: AppProps) {
   const client = useApollo(pageProps);
   const [athCliente, setAthCliente] = useState(undefined);

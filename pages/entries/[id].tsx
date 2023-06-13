@@ -42,6 +42,17 @@ type FormData = {
   responsibleIs: string;
 };
 
+/**
+ * Component that displays the detail page of an entry.
+ *
+ * This component shows the form to edit the details of an entry.
+ * Allows the user to modify the description, status and person responsible for the entry.
+ * It also allows you to save the changes made and delete the entry.
+ *
+ * @param {Object} props - Component properties.
+ * @returns {ReactElement} The EntryPage component.
+ */
+
 const EntryPage = React.memo((props: any) => {
   let dart: Entry;
   const [entry, setEntry] = useState(dart!);
@@ -67,6 +78,11 @@ const EntryPage = React.memo((props: any) => {
     },
   });
 
+  /**
+   * Handles the save event of the form.
+   *
+   * @param {FormData} formData - The form data.
+   */
   const onSave = ({ description, status, responsibleIs }: FormData) => {
     if (description.trim().length === 0) return;
     if (responsibleIs.trim().length === 0) return;
@@ -82,6 +98,9 @@ const EntryPage = React.memo((props: any) => {
     history.goBack();
   };
 
+  /**
+   * Handles the entry deletion event.
+   */
   const onDelete = () => {
     const updatedEntry: Entry = {
       ...entry,
@@ -121,16 +140,16 @@ const EntryPage = React.memo((props: any) => {
         open={open}
         setOpen={seOpen}
         handleClick={onDelete}
-        title="¿deseas eliminar la entrada?"
-        description="Al eliminar la entrada ya no podras recuperarla, ¿Estas seguro de eliminarlo?"
+        title="Do you want to delete the entry?"
+        description="By deleting the entry you will no longer be able to recover it, are you sure to delete it?"
       />
       <form onSubmit={handleSubmit(onSave)} noValidate>
         <Grid container justifyContent="center" sx={{ marginTop: 2 }}>
           <Grid item xs={12} sm={8} md={6}>
             <Card sx={{ background: "#eee", padding: "10px" }}>
               <CardHeader
-                title={`Entrada:`}
-                subheader={`Creada ${dateFunctions.getFormatDistanceToNow(
+                title={`Task:`}
+                subheader={`Created ${dateFunctions.getFormatDistanceToNow(
                   convertDateStringToTimeInMilliseconds(entry.createdAt!)
                 )}`}
               />

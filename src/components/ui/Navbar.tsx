@@ -17,13 +17,23 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-
+/**
+ * Navigation bar component.
+ *
+ * Shows the navigation bar with options like search and log out.
+ *
+ * @returns {ReactElement} The Navbar component.
+ */
 export const Navbar = () => {
   const { push } = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const onLogoutClick = useLogout();
 
+  /**
+   * Manage the search term.
+   * Redirects to the search page if the term is not empty.
+   */
   const onSearchTerm = () => {
     if (searchTerm.trim().length === 0) return;
     push(`/search/${searchTerm}`);
