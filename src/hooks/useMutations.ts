@@ -2,7 +2,7 @@ import { useAuth } from "8base-react-sdk";
 import { useMutation } from '@apollo/client';
 import { DocumentNode } from 'graphql';
 
-import { setAuthToken, httpLink } from "../apollo";
+import { setAuthToken, httpLink } from "../shared/apollo";
 
 export const useMutations = (graphql: any) => {
   const updateCache = (cache: any, {data}: any) => {

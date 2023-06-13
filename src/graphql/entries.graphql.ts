@@ -3,6 +3,23 @@ import { gql } from "@apollo/client";
 /**
  * Query entries list
  */
+export const ENTRY_QUERY = gql`
+  query Entry($id: ID){
+    entry(id: $id) {
+      id
+      description
+      status
+      responsibleIs
+      informerIs
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+/**
+ * Query entry by ID
+ */
 export const ENTRIES_LIST_QUERY = gql`
   query {
     entriesList {

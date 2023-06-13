@@ -1,32 +1,42 @@
 "use client";
-import { useCallback, useState, useEffect } from 'react';
-import type { AppProps } from "next/app";
-import { ApolloProvider } from '@apollo/client';
+import { AppProvider } from "8base-react-sdk";
+import { AUTH_STRATEGIES, Auth } from "8base-sdk";
+import { ApolloProvider } from "@apollo/client";
 import { ThemeProvider } from "@mui/material";
-import { AppProvider } from '8base-react-sdk';
-import { Auth, AUTH_STRATEGIES } from '8base-sdk';
+import type { AppProps } from "next/app";
+import { SnackbarProvider } from 'notistack';
+import { useCallback, useEffect, useState } from "react";
 
-import { lightTheme } from "@/src/themes";
+import { Loading } from "@/src/components/ui/Loading";
+import { EntriesProvider } from "@/src/contexts/entries";
 import { UIProvider } from "@/src/contexts/ui";
 import useApollo from "@/src/hooks/useApollo";
-import { EntriesProvider } from "@/src/contexts/entries";
-import { Loading } from '@/src/components/ui/Loading';
-import { AUTH_CLIENT_ID, AUTH_DOMAIN, LOGOUT_REDIRECT_URI, REDIRECT_URI, WORKSPACE_ENDPOINT } from '@/src/shared/constants';
+import {
+  AUTH_CLIENT_ID,
+  AUTH_DOMAIN,
+  LOGOUT_REDIRECT_URI,
+  REDIRECT_URI,
+  WORKSPACE_ENDPOINT,
+} from "@/src/shared/constants";
+import { lightTheme } from "@/src/themes";
+import { BrowserRouter } from "react-router-dom";
+import { Routes } from "./routes";
 
 export default function App({ Component, pageProps }: AppProps) {
   const client = useApollo(pageProps);
-  const [athCliente, setAthCliente] = useState(undefined)
+  const [athCliente, setAthCliente] = useState(undefined);
 
   const onRequestSuccess = useCallback(({ operation }: any) => {
     const message = operation.getContext();
 
     if (message) {
-      console.log('message: ', message);
+      console.log("message: ", message);
     }
   }, []);
 
   const onRequestError = useCallback(({ graphQLErrors }: any) => {
-    const hasGraphQLErrors = Array.isArray(graphQLErrors) && graphQLErrors.length > 0;
+    const hasGraphQLErrors =
+      Array.isArray(graphQLErrors) && graphQLErrors.length > 0;
 
     if (hasGraphQLErrors) {
       graphQLErrors.forEach((error) => {
@@ -36,7 +46,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const auth: any = Auth.createClient(
         {
           strategy: AUTH_STRATEGIES.WEB_8BASE_COGNITO,
@@ -51,28 +61,43 @@ export default function App({ Component, pageProps }: AppProps) {
       );
       setAthCliente(auth);
     }
-  }, [])
-  
+  }, []);
+
   if (!athCliente || !client) {
-    return <Loading />
+    return <Loading />;
+  }
+
+  const renderComponent = ({ loading }: any) => {
+    if (loading) {
+      return <Loading />;
+    }
+
+    return (
+      <SnackbarProvider maxSnack={ 3 }>
+        <BrowserRouter>
+          <ApolloProvider client={client}>
+            <EntriesProvider>
+              <UIProvider>
+                <ThemeProvider theme={lightTheme}>
+                  <Routes />
+                </ThemeProvider>
+              </UIProvider>
+            </EntriesProvider>
+          </ApolloProvider>
+        </BrowserRouter>
+      </SnackbarProvider>
+    );
   }
 
   return (
     <AppProvider
-        uri={WORKSPACE_ENDPOINT!}
-        authClient={athCliente}
-        onRequestError={onRequestError}
-        onRequestSuccess={onRequestSuccess}
-      >
-      <ApolloProvider client={client}>
-        <EntriesProvider>
-          <UIProvider>
-            <ThemeProvider theme={lightTheme}>
-                <Component {...pageProps} />
-            </ThemeProvider>
-          </UIProvider>
-        </EntriesProvider>
-      </ApolloProvider>
+      uri={WORKSPACE_ENDPOINT!}
+      authClient={athCliente}
+      onRequestError={onRequestError}
+      onRequestSuccess={onRequestSuccess}
+      withSubscriptions
+    >
+       {renderComponent}
     </AppProvider>
   );
 }

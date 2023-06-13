@@ -9,8 +9,9 @@ import { Loading } from '@/src/components/ui/Loading';
 import { useQueries } from '@/src/hooks/useQueries';
 import { AUTH_PROFILE_ID } from '@/src/shared/constants';
 import { CURRENT_USER_QUERY, USER_SIGN_UP_MUTATION } from '@/src/shared/graphql';
+import { useHistory } from 'react-router-dom';
 
-const authorizeUser = async ({ authClient, apolloClient, router, data }: any) => {
+const authorizeUser = async ({ authClient, apolloClient, history, data }: any) => {
   /* Get authResult from auth client after redirect */
   const { idToken, email, firstName, lastName } = await authClient.getAuthorizedData();
   /* Add the idToken to the auth state */
@@ -59,28 +60,24 @@ const authorizeUser = async ({ authClient, apolloClient, router, data }: any) =>
     })
     .finally(() => {
       /* Redirect user to root path */
-      router.replace('/task/list');
-      setTimeout(() => {
-        router.reload();
-      }, (1200))
+      history.replace('/task/list');
+      console.log('daaaaaaaaa')
     });
 };
 
-const CallbackContainer = () => {
+export default function CallbackContainer() {
   const { authClient, authState } = useAuth();
   const apolloClient = useApolloClient();
-  const router = useRouter();
+  const history = useHistory();
   const [loading, setLoading] = useState(false);
   const data = useQueries(CURRENT_USER_QUERY);
   
   useEffect(() => {
     if (!loading) {
       setLoading(true);
-      authorizeUser({ authClient, apolloClient, router, data });
+      authorizeUser({ authClient, apolloClient, history, data });
     }
   }, []);
 
   return <Loading />;
 };
-
-export default CallbackContainer;

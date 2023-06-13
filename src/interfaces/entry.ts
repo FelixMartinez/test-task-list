@@ -1,8 +1,8 @@
 export interface Entry {
     id: string;
     description: string;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt?: string;
+    updatedAt?: string;
     responsibleIs?: string;
     informerIs: string;
     status: EntryStatus;

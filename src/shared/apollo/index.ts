@@ -42,7 +42,7 @@ export const setAuthToken = (token: string) => setContext((_, { headers }) => {
   return headersConst;
 });
 
-const createApolloClient = () => {
+export const createApolloClient = () => {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: authLink.concat(httpLink),
